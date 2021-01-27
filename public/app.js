@@ -1,4 +1,5 @@
-var url = "http://localhost:5000"
+// var url = "http://localhost:5000"
+var url = "https://twitterzar.herokuapp.com/"
 var socket = io(url);
 socket.on('connect', function () {
     console.log("connected")
