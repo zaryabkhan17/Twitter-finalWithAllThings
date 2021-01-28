@@ -161,6 +161,7 @@ router.post('/forget-password', (req, res, next) => {
                 email: req.body.email,
                 otp: otp
             }).then((data) => {
+                console.log(otp)
                 client.sendEmail({
                     "From": "zaryab_student@sysborg.com",
                     "To": req.body.email,
