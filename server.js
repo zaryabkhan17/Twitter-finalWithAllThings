@@ -33,10 +33,13 @@ var upload = multer({ storage: storage })
 
 const admin = require("firebase-admin");
 // https://firebase.google.com/docs/storage/admin/start
-var SERVICE_ACCOUNT = JSON.parse(process.env.serviceAccount)
+var SERVICE_ACCOUNT = JSON.parse(process.env.SERVICE_ACCOUNT)
+
+
+
 admin.initializeApp({
     credential: admin.credential.cert(SERVICE_ACCOUNT),
-    databaseURL: process.env.databaseURL    
+    databaseURL: process.env.databaseURL
 });
 const bucket = admin.storage().bucket(process.env.bucket);
 
@@ -118,15 +121,15 @@ app.post("/tweet", upload.any(), (req, res, next) => {
                 }).then((urlData, err) => {
                     if (!err) {
                         console.log("public downloadable url: ", urlData[0])
-                        userModel.findById(req.headers.jToken.id, 'name profilePic email', (err,user)=>{
+                        userModel.findById(req.headers.jToken.id, 'name profilePic email', (err, user) => {
                             console.log("user =======>", user.email)
                             if (!err) {
                                 tweetModel.create({
                                     "name": user.name,
                                     "tweets": req.body.tweet,
-                                   "profilePic": user.profilePic,
-                                   "tweetImg": urlData[0],
-                                   "email": user.email
+                                    "profilePic": user.profilePic,
+                                    "tweetImg": urlData[0],
+                                    "email": user.email
                                 }).then((data) => {
                                     console.log(data)
                                     res.send({
@@ -144,7 +147,7 @@ app.post("/tweet", upload.any(), (req, res, next) => {
                                     })
                                 })
                             }
-                            else{
+                            else {
                                 res.send("err")
                             }
                         })
@@ -168,7 +171,7 @@ app.post('/textTweet', (req, res, next) => {
             message: "please provide tweet"
         })
     }
-    userModel.findOne({email: req.body.jToken.email},(err,user)=>{
+    userModel.findOne({ email: req.body.jToken.email }, (err, user) => {
         console.log("user =======>", user.email)
         if (!err) {
             tweetModel.create({
@@ -178,20 +181,20 @@ app.post('/textTweet', (req, res, next) => {
                 "profilePic": user.profilePic,
             }).then((data) => {
                 console.log(data)
-                    res.send({
-                        status: 200,
-                        message: "Post created",
-                        data: data
-                    })
-                    io.emit("NEW_POST", data)
-                }).catch(()=>{
-                    console.log(err);
-                    res.status(500).send({
-                        message: "user create error, " + err
-                    })
-                })   
+                res.send({
+                    status: 200,
+                    message: "Post created",
+                    data: data
+                })
+                io.emit("NEW_POST", data)
+            }).catch(() => {
+                console.log(err);
+                res.status(500).send({
+                    message: "user create error, " + err
+                })
+            })
         }
-        else{
+        else {
             console.log(err)
         }
     })
@@ -204,24 +207,24 @@ app.get('/getTweets', (req, res, next) => {
             console.log(err)
         }
         else {
-            res.send({data:data});
+            res.send({ data: data });
         }
     })
 })
 app.get('/myTweets', (req, res, next) => {
 
-    userModel.findOne({email: req.body.jToken.email},(err,user)=>{
+    userModel.findOne({ email: req.body.jToken.email }, (err, user) => {
         if (!err) {
-            tweetModel.find({email:req.body.jToken.email}, (err, data) => {
+            tweetModel.find({ email: req.body.jToken.email }, (err, data) => {
                 if (err) {
                     console.log(err)
                 }
                 else {
-                        res.send({data:data});
+                    res.send({ data: data });
                 }
-            })      
+            })
         }
-        else{
+        else {
             console.log(err)
         }
     })
@@ -242,7 +245,7 @@ app.post("/upload", upload.any(), (req, res, next) => {
                         userModel.findOne({ email: req.body.email }, (err, user) => {
                             console.log(user)
                             if (!err) {
-                                tweetModel.updateMany({ name: req.headers.jToken.name }, {profilePic:urlData[0]}, (err, tweetModel) => {
+                                tweetModel.updateMany({ name: req.headers.jToken.name }, { profilePic: urlData[0] }, (err, tweetModel) => {
                                     console.log(tweetModel)
                                     if (!err) {
                                         console.log("update");
