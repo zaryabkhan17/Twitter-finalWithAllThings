@@ -301,7 +301,7 @@ function logout() {
 }
 
 //display homepage using display none or block property
-document.getElementById('profile').style.display = "none"
+// document.getElementById('profile').style.display = "none"
 function showHome() {
     document.getElementById('profile').style.display = "none"
     document.getElementById('home').style.display = "block"
